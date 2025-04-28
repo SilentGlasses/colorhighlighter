@@ -1,0 +1,54 @@
+*colorhighlighter.txt*	Highlight color codes in Vim
+
+Author: SilentGlasses
+License: MIT
+
+==============================================================================
+CONTENTS					*colorhighlighter-contents*
+
+1. Introduction			|colorhighlighter-introduction|
+2. Installation		|colorhighlighter-installation|
+3. Configuration		|colorhighlighter-configuration|
+4. Commands			|colorhighlighter-commands|
+5. Troubleshooting		|colorhighlighter-troubleshooting|
+
+==============================================================================
+INTRODUCTION					*colorhighlighter-introduction*
+
+This plugin highlights color codes (hex, rgb, hsl) in your code in their actual
+colors, with automatic contrast adjustment for text visibility.
+
+Supported formats:
+- Hex: #RRGGBB, #RGB
+- RGB: rgb(255,0,0), rgba(255,0,0,0.5)
+- HSL: hsl(120,100%,50%), hsla(120,100%,50%,0.5)
+
+==============================================================================
+INSTALLATION					*colorhighlighter-installation*
+
+Using vim-plug:
+>
+	Plug 'SilentGlasses/colorhighlighter'
+<
+
+Requires Vim compiled with termguicolors or GUI Vim for true color support.
+
+==============================================================================
+COMMANDS					*colorhighlighter-commands*
+
+:ColorHighlight			Refresh color highlighting manually
+:ColorDebug			Show debug information about color detection
+
+==============================================================================
+TROUBLESHOOTING				*colorhighlighter-troubleshooting*
+
+Q: Colors aren't showing up?
+A: Ensure you have >
+	set termguicolors
+< in your vimrc.
+
+Q: Colors look wrong?
+A: Verify your terminal supports true color with >
+	:echo has('termguicolors')
+< Should return 1.
+
