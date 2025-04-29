@@ -1,5 +1,5 @@
 " ColorHighlighter - Highlight color codes with their actual colors
-" Author: Plugin Maintainer
+" Author: SilentGlasses
 " Version: 1.0.1
 " Last Modified: 2025-04-29
 " Description: Vim plugin that highlights color codes in their actual colors
