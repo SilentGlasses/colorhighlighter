@@ -1,3 +1,126 @@
+*colorhighlighter.txt*  For Vim version 8.0+  Last change: 2025 April 28
+
+                    ColorHighlighter Plugin Documentation
+
+==============================================================================
+CONTENTS                                            *colorhighlighter-contents*
+
+    1. Introduction ........................ |colorhighlighter-introduction|
+    2. Configuration ...................... |colorhighlighter-configuration|
+    3. Commands ........................... |colorhighlighter-commands|
+    4. Size Limit ......................... |colorhighlighter-size-limit|
+    5. About ............................. |colorhighlighter-about|
+
+==============================================================================
+1. INTRODUCTION                                  *colorhighlighter-introduction*
+
+ColorHighlighter is a Vim plugin that highlights color codes with their actual
+colors. It supports various color formats including:
+
+- Hex colors (#RGB, #RRGGBB)
+- RGB/RGBA values (rgb(255, 0, 0), rgba(255, 0, 0, 0.5))
+- HSL/HSLA values (hsl(0, 100%, 50%), hsla(0, 100%, 50%, 0.5))
+- Named colors (red, green, blue, etc.)
+
+==============================================================================
+2. CONFIGURATION                                *colorhighlighter-configuration*
+
+The following options can be set in your vimrc:
+
+*g:colorhighlighter_filetypes*
+    List of filetypes for which color highlighting is enabled.
+    Default: ['css','scss','sass','less','stylus','html','javascript',
+             'typescript','jsx','tsx','json','yaml']
+
+*g:colorhighlighter_enable*
+    Enable or disable the plugin.
+    Default: 1 (enabled)
+
+*g:colorhighlighter_named_colors*
+    Dictionary of additional named colors.
+    Default: {}
+
+*g:colorhighlighter_hl_prefix*
+    Prefix for highlight group names.
+    Default: 'ColorHL_'
+
+*g:colorhighlighter_tailwind_enable*
+    Enable support for Tailwind CSS color classes.
+    Default: 1 (enabled)
+
+*g:colorhighlighter_cssvars_enable*
+    Enable support for CSS variables.
+    Default: 1 (enabled)
+
+*g:colorhighlighter_css_media_queries*
+    Enable support for CSS media queries.
+    Default: 0 (disabled)
+
+Performance options:
+
+*g:colorhighlighter_max_cache_size*
+    Maximum number of color patterns to cache.
+    Default: 1000
+
+*g:colorhighlighter_highlight_refresh*
+    Refresh interval in milliseconds.
+    Default: 500
+
+*g:colorhighlighter_debounce_ms*
+    Debounce time in milliseconds for text changes.
+    Default: 200
+
+==============================================================================
+3. COMMANDS                                        *colorhighlighter-commands*
+
+*:ColorHighlighterToggle*
+    Toggle color highlighting on/off.
+
+*:ColorHighlighterEnable*
+    Enable color highlighting.
+
+*:ColorHighlighterDisable*
+    Disable color highlighting.
+
+==============================================================================
+4. SIZE LIMIT                                     *colorhighlighter-size-limit*
+
+The ColorHighlighter plugin includes a file size limit feature to prevent 
+performance issues with large files. Files larger than the configured size will 
+be automatically skipped, and a warning message will be displayed.
+
+*g:colorhighlighter_max_file_size*
+    Maximum file size in bytes for which color highlighting will be performed.
+    Files larger than this size will be skipped to prevent performance issues.
+    Default: 1048576 (1MB)
+
+    To change the maximum file size, add to your vimrc:
+>
+        " Example: Set to 2MB
+        let g:colorhighlighter_max_file_size = 2097152
+
+        " Example: Set to 500KB
+        let g:colorhighlighter_max_file_size = 512000
+<
+    When a file exceeds this limit:
+    - Color highlighting will be disabled for that buffer
+    - A warning message will be displayed
+    - The decision is cached per-buffer for performance
+    - The cache is cleared when re-checking filetypes or reopening the file
+
+Note: The file size check is performed efficiently and cached per-buffer to 
+      maintain the plugin's performance characteristics.
+
+==============================================================================
+5. ABOUT                                              *colorhighlighter-about*
+
+Author:  Plugin Maintainer
+License: MIT
+GitHub:  https://github.com/username/colorhighlighter
+
+==============================================================================
+ vim:tw=78:ts=8:ft=help:norl:
+
 *colorhighlighter.txt*	Highlight color codes in Vim
 
 Author: SilentGlasses
@@ -10,7 +133,8 @@ CONTENTS					*colorhighlighter-contents*
 2. Installation		|colorhighlighter-installation|
 3. Configuration		|colorhighlighter-configuration|
 4. Commands			|colorhighlighter-commands|
-5. Troubleshooting		|colorhighlighter-troubleshooting|
+5. Examples			|colorhighlighter-examples|
+6. Troubleshooting		|colorhighlighter-troubleshooting|
 
 ==============================================================================
 INTRODUCTION					*colorhighlighter-introduction*
@@ -22,6 +146,7 @@ Supported formats:
 - Hex: #RRGGBB, #RGB
 - RGB: rgb(255,0,0), rgba(255,0,0,0.5)
 - HSL: hsl(120,100%,50%), hsla(120,100%,50%,0.5)
+- Named: red, green, blue (see |colorhighlighter-named-colors|)
 
 ==============================================================================
 INSTALLATION					*colorhighlighter-installation*
@@ -31,13 +156,55 @@ Using vim-plug:
 	Plug 'SilentGlasses/colorhighlighter'
 <
 
-Requires Vim compiled with termguicolors or GUI Vim for true color support.
-
-==============================================================================
-COMMANDS					*colorhighlighter-commands*
+Requires Vim 8.0+ compiled with termguicolors or GCOMMANDS					*colorhighlighter-commands*
 
 :ColorHighlight			Refresh color highlighting manually
-:ColorDebug			Show debug information about color detection
+:ColorHighlightToggle		Toggle color highlighting on/off
+:ColorHighlightList		List all detected colors
+:ColorHighlightClean		Clean up all color highlights
+:ColorPreview			Show color preview window
+:ColorTogglePreview		Toggle color preview on/off
+
+==============================================================================
+CONFIGURATION					*colorhighlighter-configuration*
+
+Options can be set in your vimrc:
+>
+	" Enable/disable features (default: 1)
+	let g:colorhighlighter_preview_enable = 1
+	let g:colorhighlighter_statusline_enable = 1
+	let g:colorhighlighter_preview_auto = 1
+
+	" Filetypes to highlight (default includes css, scss, html, etc.)
+	let g:colorhighlighter_filetypes = ['css', 'scss', 'html']
+
+	" Named color definitions
+	let g:colorhighlighter_named_colors = {
+	      \ 'black': '#000000',
+	      \ 'white': '#ffffff',
+	      \ 'red': '#ff0000',
+	      \ 'green': '#008000'
+	      \ }
+
+	" Highlight group prefix (default: 'ColorHL_')
+	let g:colorhighlighter_hl_prefix = 'ColorHL_'
+
+	" Custom highlight styles
+	let g:colorhighlighter_hl_styles = {}
+<
+
+==============================================================================
+EXAMPLES					*colorhighlighter-examples*
+
+Show a preview popup when cursor is on a color:
+>
+	:ColorPreview
+<
+
+Toggle highlighting for current buffer:
+>
+	:ColorHighlightToggle
+<
 
 ==============================================================================
 TROUBLESHOOTING				*colorhighlighter-troubleshooting*
@@ -52,3 +219,12 @@ A: Verify your terminal supports true color with >
 	:echo has('termguicolors')
 < Should return 1.
 
+Q: Commands not working?
+A: Check Vim version with >
+	:echo v:version
+< Should be >= 800.
+
+Q: Preview window not appearing?
+A: Try >
+	:let g:colorhighlighter_preview_enable=1
+< and reload the plugin.
