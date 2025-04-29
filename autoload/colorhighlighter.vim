@@ -1,9 +1,9 @@
 " colorhighlighter.vim - Highlight color codes with their actual colors
 " Author: SilentGlasses
-" Version: 1.0
+" Version: 1.0.1
 " Last Modified: 2025-04-29
 " Description: Vim plugin that highlights color codes in their actual colors
-" Compatibility: Vim 9.1 and above
+" Compatibility: Vim 8.0 and above
 
 " Script variables to track state
 let s:found_colors = {}
