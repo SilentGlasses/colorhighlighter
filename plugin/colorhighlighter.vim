@@ -1,132 +1,132 @@
-" Only load once
+" ColorHighlighter - Highlight color codes with their actual colors
+" Author: Plugin Maintainer
+" Version: 1.0.1
+" Last Modified: 2025-04-29
+" Description: Vim plugin that highlights color codes in their actual colors
+" Compatibility: Vim 9.1 and above
+
+" Version check
+if v:version < 800
+  echoerr 'ColorHighlighter requires Vim 8.0 or later'
+  finish
+endif
+
+" Documentation file path
+let s:doc_path = expand('<sfile>:p:h') . '/../doc/colorhighlighter.txt'
+
+" Generate help tags if file exists
+if filereadable(s:doc_path)
+  silent! execute 'helptags ' . fnameescape(expand('<sfile>:p:h') . '/../doc')
+endif
+
+" Prevent loading multiple times
 if exists('g:loaded_colorhighlighter')
   finish
 endif
-let g:loaded_colorhighlighter = 1
 
-" Configuration variables
-let g:colorhighlighter_filetypes = 
-      \ get(g:, 'colorhighlighter_filetypes',
-      \ ['css','scss','sass','less','stylus','html','javascript','typescript','jsx','tsx','json','yaml'])
+" Feature detection
+let s:has_termguicolors = has('termguicolors')
 
-" Initialize
-if !exists('g:colorhighlighter_enable') || g:colorhighlighter_enable
-  runtime! autoload/colorhighlighter.vim
-  call colorhighlighter#Enable()
+" Set default options if not already set
+if !exists('g:colorhighlighter_hl_prefix')
+  let g:colorhighlighter_hl_prefix = 'ColorHL_'
 endif
 
-" plugin/colorpreview.vim
-if exists('g:loaded_colorpreview')
-  finish
+" Consolidated filetypes configuration
+if !exists('g:colorhighlighter_filetypes')
+  let g:colorhighlighter_filetypes = [
+        \ 'css', 'scss', 'sass', 'less', 'stylus', 
+        \ 'html', 'javascript', 'typescript', 
+        \ 'jsx', 'tsx', 'json', 'yaml'
+        \ ] 
 endif
-let g:loaded_colorpreview = 1
 
-function! s:hex_to_rgb(hex)
-  let hex = substitute(a:hex, '#', '', '')
-  if strlen(hex) == 3
-    let r = str2nr(repeat(strpart(hex, 0, 1), 2), 16)
-    let g = str2nr(repeat(strpart(hex, 1, 1), 2), 16)
-    let b = str2nr(repeat(strpart(hex, 2, 1), 2), 16)
-  else
-    let r = str2nr(strpart(hex, 0, 2), 16)
-    let g = str2nr(strpart(hex, 2, 2), 16)
-    let b = str2nr(strpart(hex, 4, 2), 16)
-  endif
-  return [r, g, b]
-endfunction
+" Support for legacy configuration
+if exists('g:colorhighlighter_included_filetypes') && !exists('g:colorhighlighter_filetypes')
+  let g:colorhighlighter_filetypes = g:colorhighlighter_included_filetypes
+endif
 
-function! s:rgb_to_hex(r, g, b)
-  return printf('#%02x%02x%02x', a:r, a:g, a:b)
-endfunction
+" Excluded filetypes
+if !exists('g:colorhighlighter_excluded_filetypes')
+  let g:colorhighlighter_excluded_filetypes = []
+endif
 
-function! s:parse_rgb(match)
-  let m = matchlist(a:match, '\vrgba?\((\s*\d+)\s*,(\s*\d+)\s*,(\s*\d+)[^)]*\)')
-  if len(m) >= 4
-    return s:rgb_to_hex(str2nr(m[1]), str2nr(m[2]), str2nr(m[3]))
-  endif
-  return ''
-endfunction
+" Extended named colors support
+if !exists('g:colorhighlighter_named_colors')
+  let g:colorhighlighter_named_colors = {
+        \ 'black': '#000000',
+        \ 'white': '#ffffff',
+        \ 'red': '#ff0000',
+        \ 'green': '#008000',
+        \ 'blue': '#0000ff',
+        \ 'yellow': '#ffff00',
+        \ 'orange': '#ffa500',
+        \ 'purple': '#800080',
+        \ 'pink': '#ffc0cb',
+        \ 'gray': '#808080',
+        \ 'grey': '#808080'
+        \ }
+endif
 
-function! s:parse_hsl(match)
-  let m = matchlist(a:match, '\vhsla?\((\d+),\s*(\d+)%?,\s*(\d+)%?[^)]*\)')
-  if len(m) >= 4
-    let h = str2float(m[1]) / 360.0
-    let s = str2float(m[2]) / 100.0
-    let l = str2float(m[3]) / 100.0
+" Highlight style configuration
+if !exists('g:colorhighlighter_hl_styles')
+  let g:colorhighlighter_hl_styles = {}
+endif
 
-    if s == 0
-      let r = g = b = l
-    else
-      let q = l < 0.5 ? l * (1 + s) : l + s - l * s
-      let p = 2 * l - q
-      function! Hue2RGB(p, q, t)
-        if a:t < 0 | let a:t += 1 | endif
-        if a:t > 1 | let a:t -= 1 | endif
-        if a:t < 1/6.0 | return a:p + (a:q - a:p) * 6 * a:t | endif
-        if a:t < 1/2.0 | return a:q | endif
-        if a:t < 2/3.0 | return a:p + (a:q - a:p) * (2/3.0 - a:t) * 6 | endif
-        return a:p
-      endfunction
-      let r = Hue2RGB(p, q, h + 1/3.0)
-      let g = Hue2RGB(p, q, h)
-      let b = Hue2RGB(p, q, h - 1/3.0)
-    endif
+" Create user commands with improved naming
+command! -nargs=0 ColorHighlight call colorhighlighter#HighlightColors()
+command! -nargs=0 ColorHighlightToggle call colorhighlighter#Toggle()
+command! -nargs=0 ColorHighlightEnable call colorhighlighter#Enable()
+command! -nargs=0 ColorHighlightDisable call colorhighlighter#Disable()
+command! -nargs=0 ColorHighlightList call colorhighlighter#ListColors()
+command! -nargs=0 ColorHighlightClean call colorhighlighter#Cleanup()
 
-    return s:rgb_to_hex(float2nr(r * 255), float2nr(g * 255), float2nr(b * 255))
-  endif
-  return ''
-endfunction
-
-function! s:HighlightColors()
-  if exists('w:color_matches')
-    for id in w:color_matches
-      call matchdelete(id)
-    endfor
-  endif
-  let w:color_matches = []
-
-  let lines = getline(1, '$')
-  let patterns = [
-        \ ['#\x\{3,6\}\>', 'hex'],
-        \ ['rgba\?([^)]\+)', 'rgb'],
-        \ ['hsla\?([^)]\+)', 'hsl']
-        \ ]
-
-  for lnum in range(len(lines))
-    let line = lines[lnum]
-    for [pattern, type] in patterns
-      let start = 0
-      while match(line, pattern, start) >= 0
-        let col = match(line, pattern, start)
-        let match_str = matchstr(line, pattern, start)
-        let color = ''
-
-        if type ==# 'hex'
-          let color = match_str
-        elseif type ==# 'rgb'
-          let color = s:parse_rgb(match_str)
-        elseif type ==# 'hsl'
-          let color = s:parse_hsl(match_str)
-        endif
-
-        if color !=# ''
-          let hl_group = 'Color_' . substitute(color, '#', '', '')
-          if !hlexists(hl_group)
-            execute 'highlight ' . hl_group . ' guibg=' . color . ' guifg=' . (color ==# '#000000' ? '#ffffff' : '#000000')
-          endif
-          let match_id = matchaddpos(hl_group, [[lnum + 1, col + 1, strlen(match_str)]])
-          call add(w:color_matches, match_id)
-        endif
-        let start = col + strlen(match_str)
-      endwhile
-    endfor
-  endfor
-endfunction
-
-augroup ColorPreview
+" Initialize the plugin with proper autocmds
+augroup ColorHighlighterInit
   autocmd!
-  autocmd BufEnter,BufReadPost,TextChanged,TextChangedI
-        \ *.css,*.scss,*.html,*.js,*.ts,*.json,*.yaml,*.yml,*.jsx,*.tsx
-        \ call s:HighlightColors()
+  autocmd FileType * call colorhighlighter#CheckFiletype()
+  autocmd BufEnter * call colorhighlighter#CheckFiletype()
+  autocmd VimLeave * call colorhighlighter#Cleanup()
 augroup END
 
+" Add real-time update events with debouncing
+if !exists('g:colorhighlighter_update_delay')
+  let g:colorhighlighter_update_delay = 500 " milliseconds
+endif
+
+augroup ColorHighlighterRealTime
+  autocmd!
+  " Update on text changes with debouncing to avoid performance issues
+  autocmd TextChanged,TextChangedI,TextChangedP * call s:DebounceHighlightCall()
+augroup END
+
+" Debouncing function to prevent excessive processing during typing
+let s:highlighter_timer = -1
+function! s:DebounceHighlightCall() abort
+  " Only proceed if the current buffer has highlighting enabled
+  if !exists('b:colorhighlighter_enabled') || !b:colorhighlighter_enabled
+    return
+  endif
+
+  " Cancel previous timer if it exists
+  if s:highlighter_timer != -1
+    call timer_stop(s:highlighter_timer)
+  endif
+
+  " Set a new timer
+  let s:highlighter_timer = timer_start(g:colorhighlighter_update_delay, 
+        \ {timer -> execute('call colorhighlighter#HighlightColors()')})
+endfunction
+
+" Control whether to enable by default
+if !exists('g:colorhighlighter_enable')
+  let g:colorhighlighter_enable = 1
+endif
+
+" Initial setup if enabled by default
+if g:colorhighlighter_enable
+  call colorhighlighter#CheckFiletype()
+endif
+
+" Mark as loaded
+let g:loaded_colorhighlighter = 1
