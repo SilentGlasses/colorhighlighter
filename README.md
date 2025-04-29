@@ -1,5 +1,7 @@
 # ColorHighlighter
 
+<img align="left" height="100" src="https://github.com/user-attachments/assets/28316820-de2a-4b2c-9fb9-218ee75fd4df" alt="ColorHighlighter Logo" />
+
 A Vim plugin that highlights color codes with their actual colors in your code. Supports various color formats including HEX, RGB, RGBA, HSL, HSLA, and named colors.
 
 *Actively maintained - Last update: April 2025*
