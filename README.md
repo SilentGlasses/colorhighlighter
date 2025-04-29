@@ -49,7 +49,7 @@ A Vim plugin that highlights color codes with their actual colors in your code. 
 Add the following to your vimrc:
 
 ```vim
-Plug 'colorhighlighter'  " Use the actual repository path when available
+Plug 'SilentGlasses/colorhighlighter'
 ```
 
 Then run `:PlugInstall`
@@ -59,7 +59,7 @@ Then run `:PlugInstall`
 Add the following to your vimrc:
 
 ```vim
-Plugin 'colorhighlighter'  " Use the actual repository path when available
+Plugin 'SilentGlasses/colorhighlighter'
 ```
 
 Then run `:PluginInstall`
@@ -67,21 +67,20 @@ Then run `:PluginInstall`
 #### [packer.nvim](https://github.com/wbthomason/packer.nvim) (for Neovim)
 
 ```lua
-use 'colorhighlighter'  -- Use the actual repository path when available
+use 'SilentGlasses/colorhighlighter'
 ```
 
 ### Manual Installation
 
-Copy the plugin files to your Vim plugin directory:
+Clone the repository directly to your Vim plugin directory:
 
+- For Vim
 ```bash
-# For Vim
-mkdir -p ~/.vim/pack/plugins/start/colorhighlighter
-cp -r autoload plugin doc LICENSE README.md ~/.vim/pack/plugins/start/colorhighlighter/
-
-# For Neovim
-mkdir -p ~/.local/share/nvim/site/pack/plugins/start/colorhighlighter
-cp -r autoload plugin doc LICENSE README.md ~/.local/share/nvim/site/pack/plugins/start/colorhighlighter/
+git clone https://github.com/SilentGlasses/colorhighlighter.git ~/.vim/pack/plugins/start/colorhighlighter
+```
+- For Neovim
+```bash
+git clone https://github.com/SilentGlasses/colorhighlighter.git ~/.local/share/nvim/site/pack/plugins/start/colorhighlighter
 ```
 
 ## Quick Start
