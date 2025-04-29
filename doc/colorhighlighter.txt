@@ -114,9 +114,9 @@ Note: The file size check is performed efficiently and cached per-buffer to
 ==============================================================================
 5. ABOUT                                              *colorhighlighter-about*
 
-Author:  Plugin Maintainer
+Author:  SilentGlasses
 License: MIT
-GitHub:  https://github.com/username/colorhighlighter
+GitHub:  https://github.com/SilentGlasses/colorhighlighter
 
 ==============================================================================
  vim:tw=78:ts=8:ft=help:norl:
